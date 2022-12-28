@@ -1,12 +1,16 @@
-package com.r3.developers.utxodemo.contracts
+package c5.example.landregistry.contracts
 
 import net.corda.v5.ledger.utxo.Command
 import net.corda.v5.ledger.utxo.Contract
 import net.corda.v5.ledger.utxo.transaction.UtxoLedgerTransaction
 
-class TestContract : Contract {
-    override fun verify(transaction: UtxoLedgerTransaction) {
-    }
-}
+class LandTitleContract: Contract {
 
-class TestCommand : Command
+    override fun verify(transaction: UtxoLedgerTransaction) {
+
+    }
+
+    class IssueLandTitle : Command
+    class TransferLandTitle : Command
+
+}

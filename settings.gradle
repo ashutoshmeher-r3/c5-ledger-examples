@@ -62,7 +62,7 @@ pluginManagement {
 }
 
 // Root project name, used in naming the project as a whole and used in naming objects built by the project.
-rootProject.name = 'csde-cordapp-template-kotlin'
+rootProject.name = 'c5-ledger-examples'
 include ':workflows'
 include ':contracts'
 

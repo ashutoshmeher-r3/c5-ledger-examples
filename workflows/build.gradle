@@ -28,9 +28,10 @@ dependencies {
     cordaProvided 'net.corda:corda-application'
     cordaProvided 'net.corda:corda-crypto'
     cordaProvided 'net.corda:corda-membership'
-    // cordaProvided 'net.corda:corda-persistence'
+    //cordaProvided 'net.corda:corda-persistence'
     cordaProvided 'net.corda:corda-serialization'
     cordaProvided 'net.corda:corda-ledger-utxo'
+    //cordaProvided 'net.corda:corda-ledger-persistence'
     cordaProvided 'net.corda:corda-ledger-consensual'
 
     // CorDapps that use the UTXO ledger must include at least one notary client plugin
