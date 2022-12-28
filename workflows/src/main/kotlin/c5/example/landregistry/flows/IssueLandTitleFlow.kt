@@ -73,6 +73,7 @@ class IssueLandTitleFlow: RPCStartableFlow {
             it.memberProvidedContext["corda.notary.service.name"] == notary.name.toString()
         }.ledgerKeys.first()
 
+        // Setting time-window is mandatory
         val transaction = utxoLedgerService
             .getTransactionBuilder()
             .setTimeWindowBetween(Instant.now(), Instant.now().plusMillis(1.days.toMillis()))
@@ -105,6 +106,7 @@ class IssueLandTitleResponderFlow: ResponderFlow {
     @CordaInject
     lateinit var utxoLedgerService: UtxoLedgerService
 
+    @Suspendable
     override fun call(session: FlowSession) {
         utxoLedgerService.receiveFinality(session) {}
 

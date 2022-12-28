@@ -31,11 +31,12 @@ dependencies {
     //cordaProvided 'net.corda:corda-persistence'
     cordaProvided 'net.corda:corda-serialization'
     cordaProvided 'net.corda:corda-ledger-utxo'
-    //cordaProvided 'net.corda:corda-ledger-persistence'
+    cordaProvided 'net.corda:corda-ledger-common'
     cordaProvided 'net.corda:corda-ledger-consensual'
 
     // CorDapps that use the UTXO ledger must include at least one notary client plugin
     cordapp "com.r3.corda.notary.plugin.nonvalidating:notary-plugin-non-validating-client:$cordaNotaryPluginsVersion"
+    cordapp "com.r3.corda.notary.plugin.nonvalidating:notary-plugin-non-validating-server:$cordaNotaryPluginsVersion"
 
     // The CorDapp uses the slf4j logging framework. Corda-API provides this so we need a 'cordaProvided' declaration.
     cordaProvided 'org.slf4j:slf4j-api'
