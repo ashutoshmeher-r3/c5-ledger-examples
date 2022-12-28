@@ -2,9 +2,6 @@ package c5.example.landregistry.flows
 
 import c5.example.landregistry.contracts.LandTitleContract
 import c5.example.landregistry.states.LandTitleState
-import net.corda.v5.application.crypto.DigitalSignatureAndMetadata
-import net.corda.v5.application.crypto.DigitalSignatureMetadata
-import net.corda.v5.application.crypto.SigningService
 import net.corda.v5.application.flows.ResponderFlow
 import net.corda.v5.application.flows.InitiatingFlow
 import net.corda.v5.application.flows.RPCStartableFlow
@@ -16,17 +13,12 @@ import net.corda.v5.application.marshalling.JsonMarshallingService
 import net.corda.v5.application.membership.MemberLookup
 import net.corda.v5.application.messaging.FlowMessaging
 import net.corda.v5.application.messaging.FlowSession
-import net.corda.v5.application.messaging.receive
-import net.corda.v5.application.serialization.SerializationService
 import net.corda.v5.base.annotations.Suspendable
 import net.corda.v5.base.types.MemberX500Name
 import net.corda.v5.base.util.contextLogger
 import net.corda.v5.base.util.days
 import net.corda.v5.crypto.SecureHash
-import net.corda.v5.crypto.SignatureSpec
-import net.corda.v5.ledger.common.Party
 import net.corda.v5.ledger.utxo.UtxoLedgerService
-import net.corda.v5.ledger.utxo.transaction.UtxoSignedTransaction
 import java.time.Instant
 import java.time.LocalDateTime
 
@@ -76,13 +68,10 @@ class TransferLandTitleFlow : RPCStartableFlow {
             myInfo.ledgerKeys.first()
         )
 
-        val notaryKey = memberLookup.lookup().first {
-            it.memberProvidedContext["corda.notary.service.name"] == oldStateAndRef.state.notary.name.toString()
-        }.ledgerKeys.first()
         val transaction = utxoLedgerService
             .getTransactionBuilder()
             .setTimeWindowBetween(Instant.now(), Instant.now().plusMillis(1.days.toMillis()))
-            .setNotary(Party(oldStateAndRef.state.notary.name, notaryKey))
+            .setNotary(oldStateAndRef.state.notary)
             .addInputState(oldStateAndRef.ref)
             .addOutputState(landTitleState)
             .addCommand(LandTitleContract.TransferLandTitle())
