@@ -18,6 +18,7 @@ import net.corda.v5.base.types.MemberX500Name
 import net.corda.v5.base.util.contextLogger
 import net.corda.v5.base.util.days
 import net.corda.v5.crypto.SecureHash
+import net.corda.v5.crypto.keys
 import net.corda.v5.ledger.utxo.UtxoLedgerService
 import java.time.Instant
 import java.time.LocalDateTime
@@ -48,15 +49,11 @@ class TransferLandTitleFlow : RPCStartableFlow {
         val owner = memberLookup.lookup(request.owner)
             ?: throw IllegalArgumentException("Unknown holder: ${request.owner}.")
 
-//        Unable to fetch old state, error: org.apache.avro.UnresolvedUnionException: Not in union, Using txId instead
-//        val oldState = utxoLedgerService.findUnconsumedStatesByType(LandTitleState::class.java).filter {
-//            it.state.contractState.titleNumber.equals(request.titleNumber)
-//        }.first()
+        val oldStateAndRef = utxoLedgerService.findUnconsumedStatesByType(LandTitleState::class.java).first {
+            it.state.contractState.titleNumber == request.titleNumber
+        }
 
-        val signedTransaction = utxoLedgerService.findSignedTransaction(SecureHash.parse(request.txId))?:
-            throw IllegalArgumentException("Transaction with id: ${request.txId} does not exist.")
-        val oldStateAndRef = signedTransaction.toLedgerTransaction().outputStateAndRefs.first()
-        val oldState = oldStateAndRef.state.contractState as LandTitleState
+        val oldState = oldStateAndRef.state.contractState
 
         val landTitleState = LandTitleState(
             oldState.titleNumber,
@@ -75,12 +72,10 @@ class TransferLandTitleFlow : RPCStartableFlow {
             .addInputState(oldStateAndRef.ref)
             .addOutputState(landTitleState)
             .addCommand(LandTitleContract.TransferLandTitle())
-            // Cannot Get Signature from CP
-            //.addSignatories(listOf(landTitleState.issuer, landTitleState.owner, oldState.owner))
-            .addSignatories(listOf(myInfo.ledgerKeys.first()))
+            .addSignatories(listOf(landTitleState.issuer, landTitleState.owner, oldState.owner))
 
         @Suppress("DEPRECATION")
-        var partiallySignedTransaction = transaction.toSignedTransaction(myInfo.ledgerKeys.first())
+        val partiallySignedTransaction = transaction.toSignedTransaction(myInfo.ledgerKeys.first())
 
         val issuer = memberLookup.lookup(oldState.issuer)
             ?: throw IllegalArgumentException("Unknown Issuer: ${oldState.issuer}.")
@@ -88,14 +83,7 @@ class TransferLandTitleFlow : RPCStartableFlow {
         val issuerSession = flowMessaging.initiateFlow(issuer.name)
         val ownerSession = flowMessaging.initiateFlow(request.owner)
 
-
-        // TODO Add CP Signatures
-//        issuerSession.send(partiallySignedTransaction)
-//        val issuerSignature = issuerSession.receive<DigitalSignatureAndMetadata>()
-//
-//        ownerSession.send(partiallySignedTransaction)
-//        val ownerSignature = ownerSession.receive<DigitalSignatureAndMetadata>()
-
+        // CP Signing automatically handled by finalize()
         val finalizedSignedTransaction = utxoLedgerService.finalize(
             partiallySignedTransaction,
             listOf(issuerSession, ownerSession)
@@ -116,32 +104,9 @@ class TransferLandTitleResponderFlow: ResponderFlow {
     @CordaInject
     lateinit var utxoLedgerService: UtxoLedgerService
 
-//    @CordaInject
-////    lateinit var signingService: SigningService
-////
-////    @CordaInject
-////    lateinit var serializationService: SerializationService
-////
-////    @CordaInject
-////    lateinit var memberLookup: MemberLookup
-
     @Suspendable
     override fun call(session: FlowSession) {
-        //TODO Add Signature - Cant find api to add signature
-//        val partiallySignedTransaction = session.receive<UtxoSignedTransaction>()
-//
-//        val signature = signingService.sign(
-//            serializationService.serialize(partiallySignedTransaction).bytes,
-//            memberLookup.myInfo().ledgerKeys.first(),
-//            SignatureSpec.ECDSA_SHA256
-//        )
-//        val signatureAndMetadata = DigitalSignatureAndMetadata(
-//            signature,
-//            DigitalSignatureMetadata(
-//                Instant.now(), signature.context
-//            )
-//        )
-//        session.send(signatureAndMetadata)
+
         utxoLedgerService.receiveFinality(session) {}
     }
 }

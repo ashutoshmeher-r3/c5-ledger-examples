@@ -23,6 +23,9 @@ import net.corda.v5.ledger.utxo.UtxoLedgerService
 import java.time.Instant
 import java.time.LocalDateTime
 
+/**
+ * A flow to issue land title
+ */
 @InitiatingFlow("issue-title")
 class IssueLandTitleFlow: RPCStartableFlow {
 
@@ -49,9 +52,8 @@ class IssueLandTitleFlow: RPCStartableFlow {
     override fun call(requestBody: RPCRequestData): String {
         val request = requestBody.getRequestBodyAs<LandRegistryRequest>(jsonMarshallingService)
 
-        //Results in error: org.apache.avro.UnresolvedUnionException: Not in union
-        //if(utxoLedgerService.findUnconsumedStatesByType(LandTitleState::class.java).isNotEmpty())
-        //    throw IllegalArgumentException("Title Number: ${request.titleNumber} already exist.")
+        if(utxoLedgerService.findUnconsumedStatesByType(LandTitleState::class.java).isNotEmpty())
+            throw IllegalArgumentException("Title Number: ${request.titleNumber} already exist.")
 
         val myInfo = memberLookup.myInfo()
         val owner = memberLookup.lookup(request.owner)
