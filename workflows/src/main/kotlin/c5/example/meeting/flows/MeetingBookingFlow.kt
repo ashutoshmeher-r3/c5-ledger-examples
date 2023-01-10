@@ -120,9 +120,6 @@ class MeetingQueryFlow : RPCStartableFlow {
     lateinit var jsonMarshallingService: JsonMarshallingService
 
     @CordaInject
-    lateinit var serializationService: SerializationService
-
-    @CordaInject
     lateinit var consensualLedgerService: ConsensualLedgerService
 
     @CordaInject

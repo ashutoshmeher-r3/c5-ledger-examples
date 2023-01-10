@@ -21,6 +21,9 @@ import net.corda.v5.ledger.utxo.UtxoLedgerService
 import java.time.Instant
 import java.time.LocalDateTime
 
+/**
+ * A flow to transfer land title from one owner to another.
+ */
 @InitiatingFlow("transfer-title")
 class TransferLandTitleFlow : RPCStartableFlow {
 

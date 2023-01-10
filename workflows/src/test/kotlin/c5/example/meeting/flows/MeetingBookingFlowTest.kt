@@ -4,10 +4,19 @@ import net.corda.simulator.RequestData
 import net.corda.simulator.Simulator
 import net.corda.simulator.crypto.HsmCategory
 import net.corda.simulator.factories.JsonMarshallingServiceFactory
+import net.corda.simulator.factories.ServiceOverrideBuilder
+import net.corda.simulator.factories.SimulatorConfigurationBuilder
+import net.corda.v5.application.marshalling.JsonMarshallingService
+import net.corda.v5.application.marshalling.json.JsonDeserializer
+import net.corda.v5.application.marshalling.json.JsonNodeReader
+import net.corda.v5.application.marshalling.json.JsonSerializer
+import net.corda.v5.application.marshalling.json.JsonWriter
 import net.corda.v5.base.types.MemberX500Name
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.Test
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class MeetingBookingFlowTest {
 
@@ -32,6 +41,7 @@ class MeetingBookingFlowTest {
         //TODO Custom Serializer for LocalDateTime
         val meetingDetail = MeetingDetail(
             "TechInterview",
+            //LocalDateTime.now().plusHours(10),
             "Meeting Room X"
         )
         val requestData = RequestData.create(
@@ -65,4 +75,15 @@ class MeetingBookingFlowTest {
 
     private fun createMember(commonName: String, orgUnit: String = "ExampleUnit", org: String = "ExampleOrg") : MemberX500Name =
         MemberX500Name.parse("CN=$commonName, OU=$orgUnit, O=$org, L=London, C=GB")
+
+//    class LocalDateTimeSerializer: JsonSerializer<LocalDateTime>, JsonDeserializer<LocalDateTime> {
+//        override fun serialize(item: LocalDateTime, jsonWriter: JsonWriter) {
+//            val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")
+//            jsonWriter.writeString(formatter.format(item))
+//        }
+//
+//        override fun deserialize(jsonRoot: JsonNodeReader): LocalDateTime {
+//            return LocalDateTime.parse(jsonRoot.asText())
+//        }
+//    }
 }
