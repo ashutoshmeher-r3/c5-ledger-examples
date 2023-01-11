@@ -72,7 +72,7 @@ class TransferLandTitleFlow : RPCStartableFlow {
             .setNotary(oldStateAndRef.state.notary)
             .addInputState(oldStateAndRef.ref)
             .addOutputState(landTitleState)
-            .addCommand(LandTitleContract.TransferLandTitle())
+            .addCommand(LandTitleContract.Transfer)
             .addSignatories(listOf(landTitleState.issuer, landTitleState.owner, oldState.owner))
 
         @Suppress("DEPRECATION")

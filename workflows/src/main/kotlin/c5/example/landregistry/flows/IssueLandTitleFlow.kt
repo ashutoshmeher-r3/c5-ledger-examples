@@ -81,7 +81,7 @@ class IssueLandTitleFlow: RPCStartableFlow {
             .setTimeWindowBetween(Instant.now(), Instant.now().plusMillis(1.days.toMillis()))
             .setNotary(Party(notary.name, notaryKey))
             .addOutputState(landTitleState)
-            .addCommand(LandTitleContract.IssueLandTitle())
+            .addCommand(LandTitleContract.Issue)
             .addSignatories(listOf(landTitleState.issuer))
 
         @Suppress("DEPRECATION") // Parameterless function not implemented yet.
