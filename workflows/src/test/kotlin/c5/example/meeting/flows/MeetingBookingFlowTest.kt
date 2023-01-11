@@ -41,7 +41,7 @@ class MeetingBookingFlowTest {
         //TODO Custom Serializer for LocalDateTime
         val meetingDetail = MeetingDetail(
             "TechInterview",
-            //LocalDateTime.now().plusHours(10),
+            "15 Jan 2023 10:00",
             "Meeting Room X"
         )
         val requestData = RequestData.create(

@@ -17,6 +17,7 @@ import net.corda.v5.ledger.consensual.ConsensualState
 import net.corda.v5.ledger.consensual.transaction.ConsensualLedgerTransaction
 import java.security.PublicKey
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 /**
  * A flow to book a meeting which requires all participants to accept
@@ -148,11 +149,11 @@ data class MeeetingQueryResponse(
     val participants: Set<MemberX500Name>
 )
 
-//TODO Custom Serializer for LocalDateTime
+//TODO Serializer for LocalDateTime
 @CordaSerializable
 data class MeetingDetail(
     val agenda: String,
-    //val time: LocalDateTime,
+    val time: String,
     val location: String)
 
 @CordaSerializable
